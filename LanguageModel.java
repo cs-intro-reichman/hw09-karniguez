@@ -34,6 +34,30 @@ public class LanguageModel {
     /** Builds a language model from the text in the given file (the corpus). */
 	public void train(String fileName) {
 		// Your code goes here
+        String win = "";
+		char c;
+		In in = new In(fileName);
+
+		for (int i = 0; i < windowLength; i++) {
+			win += in.readChar();
+		}
+
+		while (!in.isEmpty()) {
+			c = in.readChar();
+			List probs = CharDataMap.get(win);
+
+			if (probs == null) {
+				probs = new List();
+				CharDataMap.put(win, probs);
+			}
+
+			probs.update(c);
+			win = win.substring(1) + c;
+		}
+
+		for (List probs : CharDataMap.values()) {
+			calculateProbabilities(probs);
+		}
 	}
 
     // Computes and sets the probabilities (p and cp fields) of all the
